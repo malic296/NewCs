@@ -4,6 +4,7 @@ using System.Reflection.Metadata;
 using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using WebScrapper.Models;
 
 namespace WebScrapper
 {
@@ -24,33 +25,38 @@ namespace WebScrapper
                     HtmlDocument document = new HtmlDocument();
                     document.LoadHtml(resData);
 
-                    HtmlNodeCollection priceNodes = document.DocumentNode.SelectNodes("//p[@class='item-price']");
+                    HtmlNodeCollection priceNodes = document.DocumentNode.SelectNodes("//div[@class='content-box']");
+                    List<FortniteItem> fortniteItems = new List<FortniteItem>();
+                    
+                    Console.WriteLine($"Todays date: {DateTime.Today.ToString("dd/MM/yyyy")}");
+                    
 
                     if (priceNodes != null)
                     {
-                        int itemCount = priceNodes.Count;
-                        Console.WriteLine("Number of Items: " + itemCount);
-
-                        
-                        int totalPrice = 0;
-                        int parsedPrice;
+                        Console.WriteLine($"Number of Items: {priceNodes.Count}");
                         foreach (HtmlNode priceNode in priceNodes)
                         {
-                            string price = priceNode.InnerHtml;
+                            try
+                            {
+                                string itemName = priceNode.ChildNodes[1].InnerText;
+                                int itemPrice = int.Parse(priceNode.ChildNodes[3].InnerText.Replace(",", "").Trim());
+                                fortniteItems.Add(new FortniteItem(){ItemName = itemName, ItemPrice = itemPrice, RecordCreateDate = DateTime.Today});
 
-                            string[] prices = price.Split("</noscript>");
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine($"Parsing failed for {priceNode}. Error: {e}");
+                                throw;
+                            }
                             
-                            parsedPrice = int.Parse(prices[1].Replace(",", "").Trim());
-                            totalPrice = parsedPrice + totalPrice;
-                            ////
-
                         }
-                        Console.WriteLine("Price in V-bucks: " + totalPrice);
-                        DateTime today = DateTime.Today;
-                        string dateF = today.ToString("M/d/yyyy");
-                        Console.WriteLine("Todays date: " + dateF);
-                        
-                        
+
+                        foreach (var item in fortniteItems)
+                        {
+                            Console.WriteLine($"{item.ItemName} - {item.ItemPrice}V");
+                        }
+
+                        Console.WriteLine($"Total price in V-bucks: {fortniteItems.Sum(item => item.ItemPrice)}");
                         
                     }
                 }
@@ -63,7 +69,6 @@ namespace WebScrapper
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }
 
