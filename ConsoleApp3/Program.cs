@@ -32,36 +32,19 @@ namespace WebScrapper
                         Console.WriteLine("Number of Items: " + itemCount);
 
                         
-                        int finalPrice = 0;
-                        int x;
+                        int totalPrice = 0;
+                        int parsedPrice;
                         foreach (HtmlNode priceNode in priceNodes)
                         {
                             string price = priceNode.InnerHtml;
 
                             string[] prices = price.Split("</noscript>");
-
-                            bool help = false;
                             
-                            foreach (var p in prices)
-                            {
-                                
-                                if (help == true)
-                                {
+                            parsedPrice = int.Parse(prices[1].Replace(",", "").Trim());
+                            totalPrice = parsedPrice + totalPrice;
 
-                                    x = int.Parse(p.Replace(",", "").Trim());
-                                    finalPrice = finalPrice + x;
-                                }
-                                else
-                                {
-                                    
-                                }
-
-                                help = true;
-                                
-                            }
-                            
                         }
-                        Console.WriteLine("Price in V-bucks: " + finalPrice);
+                        Console.WriteLine("Price in V-bucks: " + totalPrice);
                         DateTime today = DateTime.Today;
                         string dateF = today.ToString("M/d/yyyy");
                         Console.WriteLine("Todays date: " + dateF);
