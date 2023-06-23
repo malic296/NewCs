@@ -42,6 +42,7 @@ namespace WebScrapper
                             
                             parsedPrice = int.Parse(prices[1].Replace(",", "").Trim());
                             totalPrice = parsedPrice + totalPrice;
+                            //
 
                         }
                         Console.WriteLine("Price in V-bucks: " + totalPrice);
