@@ -41,6 +41,7 @@ namespace WebScrapper
                             HtmlNodeCollection priceNodes = document1.DocumentNode.SelectNodes("//p[@class='item-price']");
                             HtmlNodeCollection rarityNodes = document1.DocumentNode.SelectNodes("//a[contains(@class, 'item-display')]");
                             
+                            
                             //script for todays rarities
                             if (rarityNodes != null)
                             {
@@ -134,56 +135,32 @@ namespace WebScrapper
                                     
                                 }
 
-                                /*
-                                
-                                String urlCur = "kurzy.cz/kurzy-men/prevodnik-men/USD-CZK/";
-                                HttpResponseMessage resCur = await httpClient.GetAsync(url1);
-                                if (resCur.IsSuccessStatusCode)
-                                {
-                                    String resCurData = await resCur.Content.ReadAsStringAsync();
-                                    HtmlDocument curDocument = new HtmlDocument();
-                                    curDocument.LoadHtml(resCurData);
-
-                                    HtmlNodeCollection answers = curDocument.DocumentNode.SelectNodes("//span[@class='result']");
-                                    if (answer != null)
-                                    {
-                                        List<String> nodeList = new List<String>();
-                                        foreach (HtmlNode node in answers)
-                                        {
-                                            String content = node.InnerHtml;
-                                            nodeList.Add(content);
-                                        }
-
-                                        float exchange = float.Parse(nodeList[1]);
-                                    }
-                                    
-                                }
-                                
-                                */
                                 
                                 int cheap = functions.howMuch(finalPrice);
-                                //float cheapUSD = functions.toUSD(cheap, exchange);
-                                Console.WriteLine("Price in V-bucks: " + finalPrice);
-                                Console.WriteLine("Cheapest way to buy that amount of V-bucks in CZK: " + cheap);
-                                //Console.WriteLine("Cheapest way to buy that amount of V-bucks in USD: " + cheapUSD);
                                 DateTime today = DateTime.Today;
                                 string dateF = today.ToString("M/d/yyyy");
                                 Console.WriteLine("Todays date: " + dateF);
+                                Console.WriteLine("Price in V-bucks: " + finalPrice);
+                                Console.WriteLine("Cheapest way to buy that amount of V-bucks in CZK: " + cheap);
                                 
                                 
                             }
+                            
+                       
                         }
                         else
                         {
                             Console.WriteLine("Error 1 from API");  
                         }
 
+                        
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
                         throw;
                     }
+                    
                 }
                 else if (answer == "a") //All skins
                 {
@@ -283,7 +260,7 @@ namespace WebScrapper
                         if (res3.IsSuccessStatusCode)
                         {
                             String res3Data = await res3.Content.ReadAsStringAsync();
-                            // musim běžet,zítra po obědě dodělám a pak upravím do nějakých funkcí nebo tak (vím že je to česky :-) )
+                            
                         }
 
 

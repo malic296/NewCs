@@ -1,4 +1,10 @@
-﻿namespace WebScrapper;
+﻿using HtmlAgilityPack;
+using System;
+using System.Net.Http;
+using System.Runtime.InteropServices.JavaScript;
+
+
+namespace WebScrapper;
                                                     
 public class functions
 {
@@ -97,14 +103,7 @@ public class functions
             differences.Clear();
 
         }
-
-
         return prize;
+    }
 
-    }
-    public static float toUSD(int czk, float trans)
-    {
-        float usd = czk * trans;
-        return usd;
-    }
 }
