@@ -1,7 +1,9 @@
 ﻿using HtmlAgilityPack;
 using System;
+using System.ComponentModel;
 using System.Net.Http;
 using System.Runtime.InteropServices.JavaScript;
+using WebScrapper.Model;
 
 
 namespace WebScrapper;
@@ -19,6 +21,39 @@ public class functions
         //(nevidím smysl psát poznámky pro tebe anglicky)
         // pravděpodobně by jsi měl lepší a jednodušší způsob jak to udělat, ale je to funkce, která by měla fungovat, aspoň co jsem testoval, takže účel to splnilo
         
+        double cursor = 0;
+        List<VCurrencyPricing> recommendation = new List<VCurrencyPricing>();
+        List<VCurrencyPricing> officialPricingList = new List<VCurrencyPricing>()
+        {
+            new VCurrencyPricing(){PricingID = 1, Currency ="CZK", PriceForPackage = 215, VInPackage = 1000},
+            new VCurrencyPricing(){PricingID = 2, Currency = "CZK", PriceForPackage = 551, VInPackage = 2800},
+            new VCurrencyPricing(){PricingID = 3, Currency = "CZK", PriceForPackage = 879, VInPackage = 5000},
+            new VCurrencyPricing(){PricingID = 4, Currency = "CZK", PriceForPackage = 2159, VInPackage = 13500}
+        };
+
+        foreach (var package in officialPricingList)
+            package.RatioPriceVsContent = package.VInPackage / package.PriceForPackage;
+        
+        while (cursor < goal)
+        {
+            foreach (var package in officialPricingList.OrderByDescending(x => x.RatioPriceVsContent))
+            {
+                if ((package.VInPackage + cursor) <= goal)
+                {
+                    recommendation.Add(package);
+                    cursor = cursor + package.VInPackage;
+                    break;
+                }
+            }
+        }
+        
+        Console.WriteLine($"\bTotal Price is {recommendation.Sum(x => x.PriceForPackage)} CZK with total of {recommendation.Select(x => x.VInPackage).Count()} packages.");
+        
+        foreach (var distinct in recommendation.DistinctBy(x => x.PricingID))
+            Console.WriteLine($"Balícek {distinct.PriceForPackage},- CZK - {recommendation.Count(x => x.PricingID == distinct.PricingID)}x");
+        
+
+        //END
         int prize = 0;
         int goal_help = 0;
         int difference = 0;
