@@ -25,10 +25,10 @@ public class functions
         List<VCurrencyPricing> recommendation = new List<VCurrencyPricing>();
         List<VCurrencyPricing> officialPricingList = new List<VCurrencyPricing>()
         {
-            new VCurrencyPricing(){PricingID = 1, Currency ="CZK", PriceForPackage = 215, VInPackage = 1000},
-            new VCurrencyPricing(){PricingID = 2, Currency = "CZK", PriceForPackage = 551, VInPackage = 2800},
-            new VCurrencyPricing(){PricingID = 3, Currency = "CZK", PriceForPackage = 879, VInPackage = 5000},
-            new VCurrencyPricing(){PricingID = 4, Currency = "CZK", PriceForPackage = 2159, VInPackage = 13500}
+            new(){PricingID = 1, Currency ="CZK", PriceForPackage = 215, VInPackage = 1000},
+            new(){PricingID = 2, Currency = "CZK", PriceForPackage = 551, VInPackage = 2800},
+            new(){PricingID = 3, Currency = "CZK", PriceForPackage = 879, VInPackage = 5000},
+            new(){PricingID = 4, Currency = "CZK", PriceForPackage = 2159, VInPackage = 13500}
         };
 
         foreach (var package in officialPricingList)
