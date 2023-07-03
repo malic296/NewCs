@@ -136,11 +136,11 @@ namespace WebScrapper
                                 }
 
                                 
-                                int cheap = functions.howMuch(finalPrice);
+                                int cheap = functions.cheapestWayToBuyVBucks(50000);
                                 DateTime today = DateTime.Today;
                                 string dateF = today.ToString("M/d/yyyy");
                                 Console.WriteLine("Todays date: " + dateF);
-                                Console.WriteLine("Price in V-bucks: " + finalPrice);
+                                Console.WriteLine("Amout of V-bucks to buy whole Item Shop: " + finalPrice);
                                 Console.WriteLine("Cheapest way to buy that amount of V-bucks in CZK: " + cheap);
                                 
                                 
@@ -252,24 +252,7 @@ namespace WebScrapper
                 }
                 else if (answer == "v") //V-Bucks USD
                 {
-                    Console.WriteLine("--------------- VBucks -> USD ---------------");
-                    try
-                    {
-                        String url3 = "http://orcz.com/Fortnite_Battle_Royale:_V-Bucks";
-                        HttpResponseMessage res3 = await httpClient.GetAsync(url3);
-                        if (res3.IsSuccessStatusCode)
-                        {
-                            String res3Data = await res3.Content.ReadAsStringAsync();
-                            
-                        }
-
-
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
+                    
                     
                     
                     
