@@ -2,23 +2,64 @@
 using System;
 using System.Net.Http;
 using System.Runtime.InteropServices.JavaScript;
+using WebScrapper.Model;
+using System.ComponentModel;
 
 
 namespace WebScrapper;
                                                     
 public class functions
 {
-    public static int howMuch(int goal)
+    public static int cheapestWayToBuyVBucks(int goal)
     {
         /*  1000V -> 215CZK
         *  2800V -> 551CZK
         *  5000V -> 879CZK
         *  13500 -> 2159CZK
         */
+
         
-        //(nevidím smysl psát poznámky pro tebe anglicky)
-        // pravděpodobně by jsi měl lepší a jednodušší způsob jak to udělat, ale je to funkce, která by měla fungovat, aspoň co jsem testoval, takže účel to splnilo
+        List<Currency> PricingOptions = new List<Currency>()
+        {
+            new() { PricingID = 1, priceForPackage = 215, VPerPackage = 1000, difference = 0},
+            new() { PricingID = 2, priceForPackage = 551, VPerPackage = 2800, difference = 0 },
+            new() { PricingID = 3, priceForPackage = 879, VPerPackage = 5000, difference = 0 },
+            new() { PricingID = 4, priceForPackage = 2159, VPerPackage = 13500, difference = 0 }
+        };
+
+        int sum = 0;
+        int sumPrize = 0;
         
+        while (sum < goal)
+        {
+
+            foreach (Currency package in PricingOptions)
+            {
+                sum = sum + package.VPerPackage;
+                package.difference = goal - sum;
+                package.difference = Math.Abs(package.difference);
+                sum = sum - package.VPerPackage;
+            }
+
+            int minDiff = PricingOptions.Min(option => option.difference);
+            List<Currency> optionsWithMinDifference =
+                PricingOptions.Where(option => option.difference == minDiff).ToList();
+
+            foreach (Currency option in optionsWithMinDifference)
+            {
+                sum = sum + option.VPerPackage;
+                sumPrize = sumPrize + option.priceForPackage;
+            }
+            
+        }
+
+        return sumPrize;
+
+
+    }
+}
+
+/*
         int prize = 0;
         int goal_help = 0;
         int difference = 0;
@@ -104,6 +145,4 @@ public class functions
 
         }
         return prize;
-    }
-
-}
+        */
