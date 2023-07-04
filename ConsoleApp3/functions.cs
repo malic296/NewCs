@@ -18,7 +18,6 @@ public class functions
         *  13500 -> 2159CZK
         */
 
-        
         List<Currency> PricingOptions = new List<Currency>()
         {
             new() { PricingID = 1, priceForPackage = 215, VPerPackage = 1000, difference = 0},
@@ -26,6 +25,50 @@ public class functions
             new() { PricingID = 3, priceForPackage = 879, VPerPackage = 5000, difference = 0 },
             new() { PricingID = 4, priceForPackage = 2159, VPerPackage = 13500, difference = 0 }
         };
+        
+        //Still having problems when it comes to working with models
+        //------------------------------------------------------------------------------------------------------
+        List<int> IDs = new List<int>();
+        foreach (Currency id in PricingOptions)
+        {
+            IDs.Add(id.PricingID);
+        }
+        
+        int reps = IDs.Count;
+        int starting_index = 0;
+        foreach (Currency pack in PricingOptions)
+        {
+            int count = 0;
+            int helpingNum = 0;
+            while (count < reps)
+            {
+                //ID of combination
+                String id = pack.PricingID.ToString() + ((pack.PricingID) + helpingNum).ToString();
+                int finalID = int.Parse(id);
+                
+                //Price of combination
+                List<Currency> prices =
+                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
+
+                int PriceForCombination = prices[0].priceForPackage + prices[1].priceForPackage;
+                    
+                //Vbucks within combination
+                List<Currency> VBucks = 
+                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
+
+                int VBucksWithinCombination = VBucks[0].VPerPackage + VBucks[1].VPerPackage;
+
+                PricingOptions.Add(new() { PricingID = finalID, priceForPackage = PriceForCombination, VPerPackage = VBucksWithinCombination, difference = 0 });
+                helpingNum++;
+                count++;
+                prices.Clear();
+                VBucks.Clear();
+            }
+
+            starting_index++;
+            reps--;
+        }
+        //------------------------------------------------------------------------------------------------------
 
         int sum = 0;
         int sumPrize = 0;
@@ -49,6 +92,11 @@ public class functions
             {
                 sum = sum + option.VPerPackage;
                 sumPrize = sumPrize + option.priceForPackage;
+
+                if (sum>=goal)
+                {
+                    break;
+                }
             }
             
         }
