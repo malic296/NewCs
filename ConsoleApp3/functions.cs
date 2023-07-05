@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices.JavaScript;
 using WebScrapper.Model;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 
 namespace WebScrapper;
@@ -25,50 +26,48 @@ public class functions
             new() { PricingID = 3, priceForPackage = 879, VPerPackage = 5000, difference = 0 },
             new() { PricingID = 4, priceForPackage = 2159, VPerPackage = 13500, difference = 0 }
         };
-        
-        //Still having problems when it comes to working with models
-        //------------------------------------------------------------------------------------------------------
-        List<int> IDs = new List<int>();
-        foreach (Currency id in PricingOptions)
+
+        //Creation of Dict to help with combining the values
+        Dictionary<int, (int, int)> PricingDict = new Dictionary<int, (int, int)>();
+
+        //Adding currencies into my dict
+        int indexInDict = 0;
+        foreach (Currency item in PricingOptions)
         {
-            IDs.Add(id.PricingID);
+            PricingDict.Add(indexInDict, (item.priceForPackage, item.VPerPackage));
+            indexInDict++;
         }
-        
-        int reps = IDs.Count;
-        int starting_index = 0;
-        foreach (Currency pack in PricingOptions)
+
+        //Creating combinations and passing it as a Currency item into the Pricing options list
+        int biggestKey = PricingDict.Keys.Max();
+        foreach (KeyValuePair<int ,(int, int)> kvp in PricingDict)
         {
-            int count = 0;
-            int helpingNum = 0;
-            while (count < reps)
-            {
-                //ID of combination
-                String id = pack.PricingID.ToString() + ((pack.PricingID) + helpingNum).ToString();
-                int finalID = int.Parse(id);
+            int index = kvp.Key;
+            int index_increment = kvp.Key;
+            //making combinations        --------------------->                            //00
+            while (index_increment < biggestKey)                                          //01
+            {   index_increment++;                                                         //02
+                (int price1, int VBucks1) = PricingDict[index];                            //03
+                (int price2, int VBucks2) = PricingDict[index_increment];                  //11
+                int addedPrice = price1 + price2;                                          //12
+                int addedVBucks = VBucks1 + VBucks2;                                       //13...
+
+                int largestID = PricingOptions.Max(currency => currency.PricingID);
+                PricingOptions.Add(new() {PricingID = (largestID + 1), priceForPackage = addedPrice, VPerPackage = addedVBucks, difference = 0});
                 
-                //Price of combination
-                List<Currency> prices =
-                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
-
-                int PriceForCombination = prices[0].priceForPackage + prices[1].priceForPackage;
-                    
-                //Vbucks within combination
-                List<Currency> VBucks = 
-                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
-
-                int VBucksWithinCombination = VBucks[0].VPerPackage + VBucks[1].VPerPackage;
-
-                PricingOptions.Add(new() { PricingID = finalID, priceForPackage = PriceForCombination, VPerPackage = VBucksWithinCombination, difference = 0 });
-                helpingNum++;
-                count++;
-                prices.Clear();
-                VBucks.Clear();
             }
-
-            starting_index++;
-            reps--;
+            
         }
-        //------------------------------------------------------------------------------------------------------
+
+        //Tested if combinations are being created well
+        /*
+        string test = "";
+        foreach (Currency item in PricingOptions)
+        {
+            test = test + $"ID: {item.PricingID}, price: {item.priceForPackage}, VBucks: {item.VPerPackage}, diff: {item.difference} \n";
+        }
+        return test;
+        */
 
         int sum = 0;
         int sumPrize = 0;
@@ -193,4 +192,53 @@ public class functions
 
         }
         return prize;
+        */
+
+
+
+
+/*
+        Still having problems when it comes to working with models
+        //------------------------------------------------------------------------------------------------------
+        List<int> IDs = new List<int>();
+        foreach (Currency id in PricingOptions)
+        {
+            IDs.Add(id.PricingID);
+        }
+        
+        int reps = IDs.Count;
+        int starting_index = 0;
+        foreach (Currency pack in PricingOptions)
+        {
+            int count = 0;
+            int helpingNum = 0;
+            while (count < reps)
+            {
+                //ID of combination
+                String id = pack.PricingID.ToString() + ((pack.PricingID) + helpingNum).ToString();
+                int finalID = int.Parse(id);
+                
+                //Price of combination
+                List<Currency> prices =
+                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
+
+                int PriceForCombination = prices[0].priceForPackage + prices[1].priceForPackage;
+                    
+                //Vbucks within combination
+                List<Currency> VBucks = 
+                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
+
+                int VBucksWithinCombination = VBucks[0].VPerPackage + VBucks[1].VPerPackage;
+
+                PricingOptions.Add(new() { PricingID = finalID, priceForPackage = PriceForCombination, VPerPackage = VBucksWithinCombination, difference = 0 });
+                helpingNum++;
+                count++;
+                prices.Clear();
+                VBucks.Clear();
+            }
+
+            starting_index++;
+            reps--;
+        }
+        //------------------------------------------------------------------------------------------------------
         */

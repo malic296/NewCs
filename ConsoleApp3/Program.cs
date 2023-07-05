@@ -136,7 +136,7 @@ namespace WebScrapper
                                 }
 
                                 
-                                int cheap = functions.cheapestWayToBuyVBucks(50000);
+                                int cheap = functions.cheapestWayToBuyVBucks(21301);
                                 DateTime today = DateTime.Today;
                                 string dateF = today.ToString("M/d/yyyy");
                                 Console.WriteLine("Todays date: " + dateF);
@@ -146,7 +146,6 @@ namespace WebScrapper
                                 
                             }
                             
-                       
                         }
                         else
                         {
