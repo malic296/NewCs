@@ -21,10 +21,10 @@ public class functions
 
         List<Currency> PricingOptions = new List<Currency>()
         {
-            new() { PricingID = 1, priceForPackage = 215, VPerPackage = 1000, difference = 0},
-            new() { PricingID = 2, priceForPackage = 551, VPerPackage = 2800, difference = 0 },
-            new() { PricingID = 3, priceForPackage = 879, VPerPackage = 5000, difference = 0 },
-            new() { PricingID = 4, priceForPackage = 2159, VPerPackage = 13500, difference = 0 }
+            new() { PricingID = 1, priceForPackage = 215, VPerPackage = 1000, differenceV = 0, differenceP = 0, overTheLimit = false},
+            new() { PricingID = 2, priceForPackage = 551, VPerPackage = 2800, differenceV = 0, differenceP = 0, overTheLimit = false },
+            new() { PricingID = 3, priceForPackage = 879, VPerPackage = 5000, differenceV = 0, differenceP = 0, overTheLimit = false },
+            new() { PricingID = 4, priceForPackage = 2159, VPerPackage = 13500, differenceV = 0, differenceP = 0, overTheLimit = false }
         };
 
         //Creation of Dict to help with combining the values
@@ -45,15 +45,16 @@ public class functions
             int index = kvp.Key;
             int index_increment = kvp.Key;
             //making combinations        --------------------->                            //00
-            while (index_increment < biggestKey)                                          //01
-            {   index_increment++;                                                         //02
+            while (index_increment < biggestKey)                                           //01
+            {                                                                              //02
                 (int price1, int VBucks1) = PricingDict[index];                            //03
                 (int price2, int VBucks2) = PricingDict[index_increment];                  //11
                 int addedPrice = price1 + price2;                                          //12
                 int addedVBucks = VBucks1 + VBucks2;                                       //13...
 
                 int largestID = PricingOptions.Max(currency => currency.PricingID);
-                PricingOptions.Add(new() {PricingID = (largestID + 1), priceForPackage = addedPrice, VPerPackage = addedVBucks, difference = 0});
+                PricingOptions.Add(new() {PricingID = (largestID + 1), priceForPackage = addedPrice, VPerPackage = addedVBucks, differenceV = 0, differenceP = 0, overTheLimit = false});
+                index_increment++;  
                 
             }
             
@@ -64,181 +65,144 @@ public class functions
         string test = "";
         foreach (Currency item in PricingOptions)
         {
-            test = test + $"ID: {item.PricingID}, price: {item.priceForPackage}, VBucks: {item.VPerPackage}, diff: {item.difference} \n";
+            test = test + $"ID: {item.PricingID}, price: {item.priceForPackage}, VBucks: {item.VPerPackage}, diffV: {item.differenceV}, diffP: {item.differenceP} \n";
         }
+        
         return test;
-        */
+        */      
 
         int sum = 0;
-        int sumPrize = 0;
+        int sumPrice = 0;
+        bool limitDone = false;
+        int vDiff;
+        int finalAddPrice;
+        int possibleAddID = 1;
+        int possibleAddPrice;
+        int finalAddVBucks;
+        int finalAddID;
+        int min;
+
+        int t1 = 0;
+        int t2 = 0;
+        int t3 = 0;
+        int t4 = 0;
+        string tFinal = "";
         
+        
+
+        List<Currency> optionsWithMinDifferenceV = new List<Currency>();
+        List<Currency> optionsWithMinDifferenceP = new List<Currency>();
+
         while (sum < goal)
         {
 
             foreach (Currency package in PricingOptions)
             {
                 sum = sum + package.VPerPackage;
-                package.difference = goal - sum;
-                package.difference = Math.Abs(package.difference);
+                vDiff = goal - sum;
+                if (vDiff > 0)
+                {
+                    package.differenceV = vDiff;
+                    package.overTheLimit = false;
+                }
+                else
+                {
+                    limitDone = true;
+                    package.differenceP = package.priceForPackage;
+                    package.overTheLimit = true;
+
+                }
                 sum = sum - package.VPerPackage;
+                
             }
 
-            int minDiff = PricingOptions.Min(option => option.difference);
-            List<Currency> optionsWithMinDifference =
-                PricingOptions.Where(option => option.difference == minDiff).ToList();
-
-            foreach (Currency option in optionsWithMinDifference)
+            if (limitDone == true)
             {
-                sum = sum + option.VPerPackage;
-                sumPrize = sumPrize + option.priceForPackage;
+                int minDiffP = PricingOptions.Where(option => option.overTheLimit == true).Min(option => option.differenceP);
+                optionsWithMinDifferenceP = PricingOptions.Where(option => option.differenceP == minDiffP && option.overTheLimit == true).ToList();
+                
+            }
+            else
+            {
+                int minDiffV = PricingOptions.Min(option => option.differenceV);
+                optionsWithMinDifferenceV = PricingOptions.Where(option => option.differenceV == minDiffV).ToList();
+                
+            }
 
-                if (sum>=goal)
+            if (limitDone == false)
+            {
+                foreach (Currency option in optionsWithMinDifferenceV)
                 {
+                    sum = sum + option.VPerPackage;
+                    sumPrice = sumPrice + option.priceForPackage;
+
+                }
+                
+            }
+            else
+            {
+                foreach (Currency option in optionsWithMinDifferenceP)
+                {
+                    min = PricingOptions.Min(option => option.priceForPackage);
+                    
+                    List<Currency> smallerPossibleAddInfo = new List<Currency>();
+                    List<Currency> minimumInfo = new List<Currency>();
+
+                    smallerPossibleAddInfo = PricingOptions.Where(opt => opt.PricingID == (option.PricingID - 1)).ToList();
+                    minimumInfo = PricingOptions.Where(opt => opt.priceForPackage == min).ToList();
+
+                    int smallerPrice = 0;
+                    int smallerVBucks = 0;
+                    int minimumPrice = 0;
+                    int minimumVBucks = 0;
+                    
+                    foreach (Currency i in smallerPossibleAddInfo)
+                    {
+                        smallerPrice = i.priceForPackage;
+                        smallerVBucks = i.VPerPackage;
+                    }
+                    
+                    foreach (Currency i in minimumInfo)
+                    {
+                        minimumPrice = i.priceForPackage;
+                        minimumVBucks = i.VPerPackage;
+                    }
+
+                    int priceChallenger = minimumPrice + smallerPrice;
+                    int VBucksChallenger = minimumVBucks + smallerVBucks;
+
+                    /*
+                    t1 = priceChallenger;
+                    t2 = option.priceForPackage;
+                    t3 = sum + VBucksChallenger;
+                    t4 = goal;
+
+                    tFinal = tFinal + $"priceChallenger = {t1}, PriceOptional = {t2}, sum + VBucksChalleger = {t3}, goal = {goal}";
+                    */
+                    
+                if (priceChallenger < option.priceForPackage && sum + VBucksChallenger >= goal)
+                    {
+                        finalAddPrice = priceChallenger;
+                        finalAddVBucks = VBucksChallenger;
+                    }
+                    else
+                    {
+                        finalAddPrice = option.priceForPackage;
+                        finalAddVBucks = option.VPerPackage;
+                    }
+                    
+                    sum = sum + finalAddVBucks;
+                    sumPrice = sumPrice + finalAddPrice;
                     break;
+                    
                 }
             }
-            
+
         }
 
-        return sumPrize;
-
+        //return tFinal;
+        return sumPrice;
 
     }
+
 }
-
-/*
-        int prize = 0;
-        int goal_help = 0;
-        int difference = 0;
-        List<int> differences = new List<int>();
-
-        Dictionary<int, int> comparison = new Dictionary<int, int>();
-        comparison.Add(215, 1000);
-        comparison.Add(551, 2800);
-        comparison.Add(879, 5000);
-        comparison.Add(2159, 13500);
-
-        while (goal_help < goal)
-        {
-            goal_help = goal_help + comparison[2159];
-            if (goal_help > goal)
-            {
-                difference = (goal_help - goal);
-                differences.Add(difference);
-            }
-            else
-            {
-                differences.Add(0);
-            }
-            goal_help = goal_help - comparison[2159] + comparison[879];
-            if (goal_help > goal)
-            {
-                difference = goal_help - goal;
-                differences.Add(difference);
-            }
-            else
-            {
-                differences.Add(1);
-            }
-            goal_help = goal_help - comparison[879] + comparison[551];
-            if (goal_help > goal)
-            {
-                difference = goal_help - goal;
-                differences.Add(difference);
-            }
-            else
-            {
-                differences.Add(1);
-            }
-            goal_help = goal_help - comparison[551] + comparison[215];
-            if (goal_help > goal)
-            {
-                difference = goal_help - goal;
-                differences.Add(difference);
-            }
-            else
-            {
-                differences.Add(1);
-            }
-            goal_help = goal_help - comparison[215];
-
-
-            int min = differences.Min();
-            int index = differences.IndexOf(min);
-            if (index == 0)
-            {
-                goal_help = goal_help + comparison[2159];
-                prize = prize + 2159;
-            }
-            else if (index == 1)
-            {
-                goal_help = goal_help + comparison[879];
-                prize = prize + 879;
-                
-            }
-            else if (index == 2)
-            {
-                goal_help = goal_help + comparison[551];
-                prize = prize + 551;
-                
-            }
-            else
-            {
-                goal_help = goal_help + comparison[215];
-                prize = prize + 215;
-                
-            }
-            differences.Clear();
-
-        }
-        return prize;
-        */
-
-
-
-
-/*
-        Still having problems when it comes to working with models
-        //------------------------------------------------------------------------------------------------------
-        List<int> IDs = new List<int>();
-        foreach (Currency id in PricingOptions)
-        {
-            IDs.Add(id.PricingID);
-        }
-        
-        int reps = IDs.Count;
-        int starting_index = 0;
-        foreach (Currency pack in PricingOptions)
-        {
-            int count = 0;
-            int helpingNum = 0;
-            while (count < reps)
-            {
-                //ID of combination
-                String id = pack.PricingID.ToString() + ((pack.PricingID) + helpingNum).ToString();
-                int finalID = int.Parse(id);
-                
-                //Price of combination
-                List<Currency> prices =
-                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
-
-                int PriceForCombination = prices[0].priceForPackage + prices[1].priceForPackage;
-                    
-                //Vbucks within combination
-                List<Currency> VBucks = 
-                    PricingOptions.Where(option => option.PricingID == pack.PricingID || option.PricingID == (pack.PricingID + helpingNum)).ToList();
-
-                int VBucksWithinCombination = VBucks[0].VPerPackage + VBucks[1].VPerPackage;
-
-                PricingOptions.Add(new() { PricingID = finalID, priceForPackage = PriceForCombination, VPerPackage = VBucksWithinCombination, difference = 0 });
-                helpingNum++;
-                count++;
-                prices.Clear();
-                VBucks.Clear();
-            }
-
-            starting_index++;
-            reps--;
-        }
-        //------------------------------------------------------------------------------------------------------
-        */

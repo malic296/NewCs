@@ -9,5 +9,8 @@ public class Currency
     [DataMember] public int priceForPackage { get; set; }
     [DataMember] public int VPerPackage { get; set; }
     
-    [DataMember] public int difference { get; set; }
+    [DataMember] public int differenceV { get; set; }
+    [DataMember] public int differenceP { get; set; }
+    
+    [DataMember] public bool overTheLimit { get; set; }
 }

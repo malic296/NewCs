@@ -135,14 +135,12 @@ namespace WebScrapper
                                     
                                 }
 
-                                
-                                int cheap = functions.cheapestWayToBuyVBucks(21301);
+                                int cheap = functions.cheapestWayToBuyVBucks(finalPrice);
                                 DateTime today = DateTime.Today;
                                 string dateF = today.ToString("M/d/yyyy");
                                 Console.WriteLine("Todays date: " + dateF);
                                 Console.WriteLine("Amout of V-bucks to buy whole Item Shop: " + finalPrice);
                                 Console.WriteLine("Cheapest way to buy that amount of V-bucks in CZK: " + cheap);
-                                
                                 
                             }
                             
