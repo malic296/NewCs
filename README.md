@@ -1,2 +1,2 @@
 # NewCs
-Aplikace v C#, kde jsem se učil WebScrapping
+Aplikace v C#, kde jsem se v rychlosti učil WebScrapping
